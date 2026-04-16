@@ -85,8 +85,16 @@ goto MENU
 :DOCKER
 :ALL_DOCKER
 cls
-echo [INFO] Iniciando Stack Completa via Docker Compose...
-docker-compose up --build
+echo [INFO] Iniciando Stack Completa (APP-GERAL) via Docker Compose...
+echo [INFO] Isso pode levar alguns instantes...
+docker-compose down >nul 2>&1
+call "%BASE_DIR%mvnw.cmd" clean package -DskipTests
+docker-compose up --build -d
+echo.
+echo [OK] Containers iniciados com sucesso!
+echo [INFO] Abrindo Front-end (Docker) em http://localhost
+start "" http://localhost
+echo.
 pause
 goto MENU
 

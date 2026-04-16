@@ -1,21 +1,6 @@
 version: '3.8'
 
 services:
-  postgres-db:
-    image: postgres:15-alpine
-    container_name: coupon-postgres
-    environment:
-      POSTGRES_DB: coupon_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432" # Porta externa 5433 para nao conflitar se voce ja tiver o Postgres local
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   coupon-api:
     build: .
     container_name: coupon-api
@@ -23,6 +8,15 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    restart: always
+
+  coupon-frontend:
+    build: 
+      context: .
+      dockerfile: FrontEND/Dockerfile
+    container_name: coupon-frontend
+    ports:
+      - "80:80"
     depends_on:
-      postgres-db:
-        condition: service_healthy
+      - coupon-api
+    restart: always
